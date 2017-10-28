@@ -5,3 +5,5 @@ https://dev.classmethod.jp/cloud/google-calendar-api-get-start/
 落としてきたjsonのフォーマットを少し直さないと自分の環境では動かなかったので,`config/client_secret.json`を参考に直してください.  
 
 https://console.developers.google.com/apis
+# atcoder_slackbot
+atcoderのコンテスト情報を取ってきて,slackで通知してくれるやつ
