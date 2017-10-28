@@ -1,0 +1,2 @@
+# atcoder_slackbot
+atcoderのコンテスト情報を取ってきて,slackで通知してくれるやつ
