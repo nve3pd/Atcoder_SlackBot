@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"os/user"
 	"path/filepath"
 	"time"
 
@@ -19,15 +18,10 @@ import (
 	"google.golang.org/api/calendar/v3"
 )
 
-func tokenCacheFile() (string, error) {
-	usr, err := user.Current()
-	if err != nil {
-		return "", err
-	}
-	tokenCacheDir := filepath.Join(usr.HomeDir, "work/Atcoder_slackBot/.tokenfiles")
+func tokenCacheFile() string {
+	tokenCacheDir := "./.tokenfiles"
 	os.MkdirAll(tokenCacheDir, 0700)
-	return filepath.Join(
-		tokenCacheDir, url.QueryEscape("calendar-go.json")), err
+	return filepath.Join(tokenCacheDir, url.QueryEscape("calendar-go.json"))
 }
 
 func tokenFromFile(file string) (*oauth2.Token, error) {
@@ -41,25 +35,11 @@ func tokenFromFile(file string) (*oauth2.Token, error) {
 	return t, err
 }
 
-func saveToken(file string, token *oauth2.Token) {
-	fmt.Printf("Saving credential file to: %s\n", file)
-	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
-	if err != nil {
-		log.Fatalf("Unable to cache oauth token: %v", err)
-	}
-	defer f.Close()
-	json.NewEncoder(f).Encode(token)
-}
-
 func getClient(ctx context.Context, config *oauth2.Config) *http.Client {
-	cacheFile, err := tokenCacheFile()
-	if err != nil {
-		log.Fatalf("Unable to get path to cached credential file. %v", err)
-	}
+	cacheFile := tokenCacheFile()
 	tok, err := tokenFromFile(cacheFile)
 	if err != nil {
-		tok = getTokenFromWeb(config)
-		saveToken(cacheFile, tok)
+    fmt.Println(err)
 	}
 	return config.Client(ctx, tok)
 }
@@ -98,9 +78,9 @@ func get_Events() *calendar.Events {
 	if err != nil {
 		log.Fatalf("Unable to retrieve calendar Client: %v", err)
 	}
-	t := time.Now().Format(time.RFC3339)
+	t := time.Now()
 	events, err := srv.Events.List("atcoder.jp_gqd1dqpjbld3mhfm4q07e4rops@group.calendar.google.com").ShowDeleted(false).
-		SingleEvents(true).TimeMin(t).MaxResults(10).OrderBy("startTime").Do()
+		SingleEvents(true).TimeMin(t.Format(time.RFC3339)).TimeMax(t.AddDate(0, 0, 1).Add(time.Duration(-t.Hour()) * time.Hour).Format(time.RFC3339)).MaxResults(10).OrderBy("startTime").Do()
 	if err != nil {
 		log.Fatalf("Unable to retrieve next ten of the user's events. %v", err)
 	}
@@ -109,7 +89,7 @@ func get_Events() *calendar.Events {
 }
 
 func post_Slack(text string) {
-	jsonstr := `{"text":"コンテスト情報:` + text + `:)"}`
+  jsonstr := "hoge"
 	hook_url := "https://hooks.slack.com/services/HOGEHOGE"
 
 	req, err := http.NewRequest(
