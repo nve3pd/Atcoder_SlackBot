@@ -76,7 +76,7 @@ func main() {
 
 	config, err := google.ConfigFromJSON(b, calendar.CalendarReadonlyScope)
 	if err != nil {
-    fmt.Println(err)
+		fmt.Println(err)
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
 	}
 	getClient(ctx, config)

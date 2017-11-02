@@ -39,7 +39,7 @@ func getClient(ctx context.Context, config *oauth2.Config) *http.Client {
 	cacheFile := tokenCacheFile()
 	tok, err := tokenFromFile(cacheFile)
 	if err != nil {
-    fmt.Println(err)
+		fmt.Println(err)
 	}
 	return config.Client(ctx, tok)
 }
@@ -69,7 +69,7 @@ func get_Events() *calendar.Events {
 
 	config, err := google.ConfigFromJSON(b, calendar.CalendarReadonlyScope)
 	if err != nil {
-    fmt.Println(err)
+		fmt.Println(err)
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
 	}
 	client := getClient(ctx, config)
@@ -89,7 +89,7 @@ func get_Events() *calendar.Events {
 }
 
 func post_Slack(text string) {
-  jsonstr := "hoge"
+	jsonstr := "hoge"
 	hook_url := "https://hooks.slack.com/services/HOGEHOGE"
 
 	req, err := http.NewRequest(
@@ -125,7 +125,7 @@ func main() {
 				when = i.Start.Date
 			}
 			fmt.Printf("%s (%s)\n", i.Summary, when)
-//			post_Slack(i.Summary)
+			//			post_Slack(i.Summary)
 		}
 	} else {
 		fmt.Printf("No upcoming events found.\n")
