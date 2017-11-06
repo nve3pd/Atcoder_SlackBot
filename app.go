@@ -18,6 +18,9 @@ import (
 	"google.golang.org/api/calendar/v3"
 )
 
+const atcoder_url = "https://atcoder.jp/?lang=ja"
+const web_hook = "hoge"
+
 func tokenCacheFile() string {
 	tokenCacheDir := "./.tokenfiles"
 	os.MkdirAll(tokenCacheDir, 0700)
@@ -89,13 +92,12 @@ func get_Events() *calendar.Events {
 }
 
 func post_Slack(text string) {
-	jsonstr := "hoge"
-	hook_url := "https://hooks.slack.com/services/HOGEHOGE"
+	json_text := "{" + "text" + ":" + text + "}"
 
 	req, err := http.NewRequest(
 		"POST",
-		hook_url,
-		bytes.NewBuffer([]byte(jsonstr)),
+		web_hook,
+		bytes.NewBuffer([]byte(json_text)),
 	)
 	if err != nil {
 		fmt.Println(err)
@@ -115,19 +117,11 @@ func post_Slack(text string) {
 func main() {
 	events := get_Events()
 
-	fmt.Println("Upcoming events:")
 	if len(events.Items) > 0 {
+		text := "今日のコンテスト情報\n"
 		for _, i := range events.Items {
-			var when string
-			if i.Start.DateTime != "" {
-				when = i.Start.DateTime
-			} else {
-				when = i.Start.Date
-			}
-			fmt.Printf("%s (%s)\n", i.Summary, when)
-			//			post_Slack(i.Summary)
+			text += fmt.Sprintln(i)
 		}
-	} else {
-		fmt.Printf("No upcoming events found.\n")
+		post_Slack(text + atcoder_url)
 	}
 }
