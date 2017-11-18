@@ -18,8 +18,7 @@ import (
 	"google.golang.org/api/calendar/v3"
 )
 
-const atcoder_url = "https://atcoder.jp/?lang=ja"
-const web_hook = "hoge"
+const ATCODER_URL = "https://atcoder.jp/?lang=ja"
 
 func tokenCacheFile() string {
 	tokenCacheDir := "./.tokenfiles"
@@ -69,6 +68,7 @@ func get_Events() *calendar.Events {
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 	}
+	fmt.Println(b)
 
 	config, err := google.ConfigFromJSON(b, calendar.CalendarReadonlyScope)
 	if err != nil {
@@ -92,11 +92,11 @@ func get_Events() *calendar.Events {
 }
 
 func post_Slack(text string) {
-	json_text := "{" + "text" + ":" + text + "}"
+	json_text := `{"text":"今日は以下のコンテストが予定されています` + "\n" + text + "\n" + ATCODER_URL + `"}`
 
 	req, err := http.NewRequest(
 		"POST",
-		web_hook,
+		os.Getenv("NITJOKEN_SLACKBOT"),
 		bytes.NewBuffer([]byte(json_text)),
 	)
 	if err != nil {
@@ -118,10 +118,10 @@ func main() {
 	events := get_Events()
 
 	if len(events.Items) > 0 {
-		text := "今日のコンテスト情報\n"
+		var text string
 		for _, i := range events.Items {
-			text += fmt.Sprintln(i)
+			text += fmt.Sprintln(i) + "\n"
 		}
-		post_Slack(text + atcoder_url)
+		post_Slack(text)
 	}
 }
