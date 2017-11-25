@@ -92,7 +92,8 @@ func get_Events() *calendar.Events {
 }
 
 func post_Slack(text string) {
-	json_text := `{"text":"今日は以下のコンテストが予定されています` + "\n" + text + "\n" + ATCODER_URL + `"}`
+	json_text := `{"text":"今日は以下のコンテストが予定されています` + "\n- " + text + ATCODER_URL + `"}`
+	fmt.Println(json_text)
 
 	req, err := http.NewRequest(
 		"POST",
@@ -120,7 +121,7 @@ func main() {
 	if len(events.Items) > 0 {
 		var text string
 		for _, i := range events.Items {
-			text += fmt.Sprintln(i) + "\n"
+			text += fmt.Sprintln(i.Summary) + "\n"
 		}
 		post_Slack(text)
 	}
