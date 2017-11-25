@@ -46,22 +46,6 @@ func getClient(ctx context.Context, config *oauth2.Config) *http.Client {
 	return config.Client(ctx, tok)
 }
 
-func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
-	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
-	fmt.Printf("Go to the following link in your browser then type the "+"authorization code: \n%v\n", authURL)
-
-	var code string
-	if _, err := fmt.Scan(&code); err != nil {
-		log.Fatalf("Unable to read authorization code %v", err)
-	}
-
-	tok, err := config.Exchange(oauth2.NoContext, code)
-	if err != nil {
-		log.Fatalf("Unable to retrieve token from web %v", err)
-	}
-	return tok
-}
-
 func get_Events() *calendar.Events {
 	ctx := context.Background()
 	b, err := ioutil.ReadFile("./config/client_secret.json")
